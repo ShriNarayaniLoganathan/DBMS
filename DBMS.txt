@@ -1,0 +1,403 @@
+PROGRAM 1 - EMPLOYEE DATABASE:
+SOL> create table employee(empno number primary key,empname varchar2(20),designation varchar2(30),gender varchar2(6),age number,dojdate,salary number);
+SQL>desc employee;
+SQL> insert into employee values(&empno,'&empname','&designation','&gender',&age,'&doj',&salary);
+SQL>select * from employee;
+A) COMPARISON:
+ (i) SQL> select * from employee where salary>30000;
+(ii) SQL> select * from employee where age between 25 and 30;
+(iii) SQL> select * from employee where empname like '%a';
+(iv) SQL> select * from employee where salary in(35000,30000,28000);
+(v) SQL>select * from employee where empno=103;
+B) LOGICAL:
+(i) SQL> select * from employee where salary30000;
+(ii) SQL> select * from employee where designation='manager' or designation='admin';
+(iii) SQL> select * from employee where not salary<30000;
+C) SORTING:
+(i) SQL> select * from employee order by empno;
+(ii) SQL> select * from employee order by empno desc;
+D) SET OPERATION:
+(i) SQL> select * from employee where salary>30000 union select * from employee where age between 25 and 30;
+(ii) SQL> select * from employee where salary>30000 union all select * from employee where age between 25 and 30;
+(iii) SQL> select * from employee where salary>30000 intersect select * from employee where age between 25 and 30;
+(iv) SQL> select * from employee where salary>30000 minus select * from employee where age between 25 and 30;
+
+PROGRAM 2: IMPLEMENTATION OF TRANSACTION CONTROL STATEMENTS (EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO.)
+SQL> Create table EMP(EMPNO number(4) primary key,Ename varchar(10),JOB Varchar(9), MGR number(4)
+SQL> DESC EMP
+SQL> insert into EMP values(7369,'SMITH','CLERK',7902,'17-Dec-80',800,null,20);
+SQL> insert into EMP values(7499,'ALLEN','SALESMAN',7698,'2-FEB-81',1600,300,30);
+SQL> Commit;
+SQL> select * from emp;
+SQL> insert into emp values(1234,'Miller','Manager',7778,'12-Dec-90',10000,null,10);
+SQL> select * from emp;
+SQL> Rollback;
+SQL> select * from emp;
+SQL> insert into emp values(7521,'WARD','SALESMAN',7698,'22-FEB-81',1250,500,30);
+SQL> select * from emp;
+SQL> SAVEPOINT A;
+SQL> insert into emp values(1251,'MILLER','PRESIDENT',7499, '31-dec-90',10000,null,10);
+SQL> select * from emp;
+SQL> Rollback to A;
+SQL> commit;
+SQL> select * from emp;
+SQL> insert into emp values(&EMPNO,'&ENAME','&JOB','&HIREDATE',&SAL,&COMM,&DEPTNO) 
+ SQL> insert into emp values(&EMPNO,'&ENAME','&JOB',&MGR,'&HIREDATE',&SAL,&COMM,&DEP TNO);
+SQL> / (3 ROWS)
+SQL> commit;
+SQL> SELECT * FROM EMP;
+
+PROGRAM 3 : SQL SINGLE ROW FUNCTIONS
+a) Write a query to display the current date. Label the column DATE.
+ b) For each employee, display the EMPNO,ENAME,SAL and SAL increased by 15% and expressed as a whole number. Label the column New Salary. 
+c) Write a query that displays the ENAME with the first letter capitalized and all other letters lowercase and the length of the name for all employees.
+ d) Display the employee’s name, and calculate the number of months between today and the date the employees hired. Label the column MONTHS_WORKED. Order your results by the number of months employed.
+A) SQL> select SYSDATE from dual;
+B) SQL> SELECT EMPNO,ENAME,SAL, ROUND(sal * 1.15, 0) "New Salary" FROM emp;
+C) SQL> SELECT ENAME,INITCAP(ENAME),LENGTH(ENAME) from EMP;
+D) SQL> SELECT ENAME,HIREDATE,TRUNC(MONTHS_BETWEEN(SYSDATE,HIREDATE)) "MONTHS_WORKED" FROM EMP ORDER BY MONTHS_BETWEEN(SYSDATE,HIREDATE);
+
+PROGRAM 4 : AGGREGATE FUNCTIONS & CLAUSES ((SUM, AVERAGE, COUNT, MINIMUM, MAXIMUM) & Clauses (WHERE,GROUP BY,HAVING ,ORDER BY))]
+SQL> SELECT COUNT(*) FROM EMP;
+SQL> SELECT MIN(SAL),MAX(SAL),AVG(SAL),SUM(SAL) FROM EMP;
+SQL> SELECT MAX(SAL) FROM EMP WHERE JOB='CLERK';
+SQL> SELECT SUM(SAL) FROM EMP WHERE DEPTNO=20 AND JOB='ANALYST';
+SQL> SELECT DEPTNO,COUNT(*) FROM EMP GROUP BY DEPTNO;
+SQL> SELECT JOB,COUNT(*) FROM EMP GROUP BY JOB;
+SQL> SELECT JOB,MIN(SAL), FROM EMP GROUP BY JOB;
+SQL> SELECT JOB,MIN(SAL),MAX(SAL),AVG(SAL),SUM(SAL) FROM EMP GROUP BY JOB;
+SQL> SELECT DEPTNO,JOB,COUNT(*) FROM EMP GROUP BY DEPTNO,JOB;
+SQL> SELECT DEPTNO,JOB,COUNT(*) FROM EMP WHERE DEPTNO=20 GROUP BY DEPTNO,JOB;
+SQL> SELECT DEPTNO,JOB,COUNT(*) FROM EMP WHERE DEPTNO=20 GROUP BY DEPTNO,JOB HAVING COUNT(*)>1 ORDER BY JOB;
+
+PROGRAM 5 : BUS RESERVATION SYSTEM APPLICATION WITH REQUIRED CONSTRAINTS 
+SQL> CREATE TABLE BUS (ROUTENO NUMBER(4) PRIMARY KEY, SOURCE VARCHAR(15),DESTINATION VARCHAR(15));
+SQL> DESC BUS;
+BLE PASSENGER (PID NUMBER(4) PRIMARY KEY, PNAME VARCHAR(15),DOB DATE,GENDER VARCHAR(6));
+SQL> DESC PASSENGER;
+CREATE TABLE BOOK_TICKET(PID NUMBER(4) REFERENCES PASSENGER(PID), ROUTENO NUMBER(4) REFERENCES BUS(ROUTENO),JOURNEY_DATE DATE,SEAT_NO VARCHAR(5),PRIMARY KEY(PID,ROUTENO,JOURNEY_DATE));
+SQL> insert into bus values(&ROUTENO,'&SOURCE','&DESTINATION');
+SQL> COMMIT;
+SQL> insert into PASSENGER VALUES(&PID,'&PNAME','&DOB','&GENDER');
+SQL> COMMIT;
+SQL> insert into BOOK_TICKET VALUES(&PID,&ROUTENO,'&JOURNEY_DATE','&SEATNO');
+SQL> COMMIT;
+SQL> SELECT * FROM PASSENGER;
+SQL> SELECT * FROM BOOK_TICKET;
+SQL> SELECT CONSTRAINT_NAME,CONSTRAINT_TYPE FROM USER_CONSTRAINTS WHERE TABLE_NAME='BUS';
+SQL> SELECT CONSTRAINT_NAME,CONSTRAINT_TYPE FROM USER_CONSTRAINTS WHERE TABLE_NAME='PASSENGER';
+SQL> SELECT CONSTRAINT_NAME,CONSTRAINT_TYPE,R_CONSTRAINT_NAME FROM USER_CONSTRAINTS WHERE TABLE_NAME='BOOK_TICKET';
+
+PROGRAM 6 – IMPLEMENTATION OF JOINS
+SQL> CREATE TABLE Sailors ( sid NUMBER PRIMARY KEY, sname VARCHAR2(14) NOT NULL, rating NUMBER, age NUMBER );
+SQL> CREATE TABLE Boats ( bid NUMBER PRIMARY KEY, bname VARCHAR2(15) NOT NULL, color VARCHAR2(10) );
+SQL> CREATE TABLE Reserves ( sid NUMBER, bid NUMBER, day DATE, PRIMARY KEY (sid, bid, day), FOREIGN KEY (sid) REFERENCES Sailors(sid), FOREIGN KEY (bid) REFERENCES Boats(bid) );
+SQL> INSERT INTO Boats (bid, bname, color) VALUES (101, 'Ocean Queen', 'Red');
+SQL> INSERT INTO Boats (bid, bname, color) VALUES (102, 'Sea Rider', 'Blue');
+SQL> INSERT INTO Boats (bid, bname, color) VALUES (102, 'Sea Rider', 'Blue');
+SQL> INSERT INTO Boats (bid, bname, color) VALUES (104, 'Sunset Cruiser', 'Yellow');
+SQL> INSERT INTO Reserves (sid, bid, day) VALUES (1, 101, TO_DATE('2025-01-10', 'YYYY-MM-DD'));
+SQL> INSERT INTO Reserves (sid, bid, day) VALUES (2, 103, TO_DATE('2025-01-11', 'YYYY-MM-DD'));
+SQL> INSERT INTO Reserves (sid, bid, day) VALUES (3, 101, TO_DATE('2025-01-15', 'YYYY-MM-DD'));
+SQL> INSERT INTO Reserves (sid, bid, day) VALUES (4, 104, TO_DATE('2025-01-16', 'YYYY-MM-DD'));
+SQL> commit;
+SQL> select * from SAILORS;
+SQL> select * from Boats;
+SQL> select * from RESERVES;
+SQL> SELECT S.sid, S.sname, B.bname, R.day  FROM Sailors S  INNER JOIN Reserves R ON S.sid = R.sid INNER JOIN Boats B ON B.bid = R.bid;
+SQL> SELECT S.sid, S.sname, B.bname, R.day FROM Sailors S  LEFT JOIN Reserves R ON S.sid = R.sid  LEFT JOIN Boats B ON B.bid = R.bid;
+SQL> SELECT S.sname, B.bname, R.day FROM Sailors S  RIGHT JOIN Reserves R ON S.sid = R.sid  RIGHT JOIN Boats B ON B.bid = R.bid;
+SQL> SELECT S.sid, S.sname, B.bid, B.bname, R.day FROM Sailors S  FULL OUTER JOIN Reserves R ON S.sid = R.sid  FULL OUTER JOIN Boats B ON B.bid = R.bid;
+SQL> SELECT sid, S.sname, R.day  FROM Sailors S  NATURAL JOIN Reserves R;
+
+PROGRAM 7-LIBRARY MANAGEMENT
+SQL> create table library_master(accno number primary key,title varchar2(25),author varchar2(25), rate number);
+SQL> create table library_transaction(userid number,accno number references library_master(accno), date_of_issue date, date_of_return date);
+insert into library_master values(&accno,'&title','&author',&rate);
+SQL> select * from library_master;
+SQL> insert into library_transaction values(&userid,&accno,'&date_of_issue','&date_of_return');
+SQL> select * from library_transaction;
+SQL> set linesize 75 
+SQL>Ttitle center “LIBRARY MANAGEMENT' skip 1- >center ****************** 
+SQL> column accno heading 'ACCOUNT NUMBER' 
+SQL> column title heading 'BOOK_NAME' 
+SQL> column date_of_issue heading 'DATE_OF_ISSUE' 
+SQL> column date_of_retrun heading 'DATE_OF_RETURN' 
+SQL> set underlineSQL> break on row skip1 
+SQL> select m.accno,m.title,t.date_of_issue from library_masterm,library_transaction t where m.accno=t.accno and date_of_return='24-aug-16';
+
+PROGRAM 8 -INVENTORY TABLE
+SQL> create table inventory(prono number primary key, pronamevarchar(20), rate number);
+SQL> insert into inventory values(&prono,'&proname',&rate);
+SQL> select * from inventory;
+SQL> begin 
+update inventory set rate=rate+(rate*20/100); 
+commit; 
+end;
+/
+SQL> select * from inventory;
+SQL> alter table inventory add no_of_items number;
+SQL> update inventory set no_of_items=case prono 
+when 1001 then 10 
+when 1002 then 8 
+when 1003 then 6 
+when 1004 then 4 
+end;
+SQL> select * from inventory;
+
+PROGRAM 9 : FACTORIAL & SUM OF THE DIGITS
+a)	Factorial of a given number.
+       SQL> set serveroutput on
+ SQL> declare i number(4):=1; 
+n number(4):=&n; 
+f number(4):=1; 
+begin for i in 1..n loop 
+f:=f*i; 
+end loop; 
+Dbms_output.put_line('The Factorial of '||n||' is:'||f); 
+end; 
+/
+
+b)	Write a program to accept a number and find the sum of the digits 
+       SQL> set serveroutput on
+SQL> Declare 
+n number:=&n; 
+s number:=0; 
+r number:=0; 
+begin 
+while n !=0 
+loop 
+r:=mod(n,10); 
+s:=s+r;
+ n:=trunc(n/10); 
+end loop; 
+dbms_output.put_line('Sum of digits of given number is '||s); 
+end;
+/
+
+PROGRAM 10 : PL/SQL PROGRAM FOR REVERSE STRING & FIBONACCI SERIES
+a)	PL/SQL program to find the Reverse String 
+SQL> set serveroutput on
+SQL > DECLARE 
+string1 VARCHAR2(100) := '&String1'; 
+string2 VARCHAR2(100) := ''; 
+i number; 
+BEGIN 
+FOR i IN REVERSE 1 .. LENGTH(string1) LOOP 
+string2 := string2 || SUBSTR(string1, i, 1); 
+END LOOP; 
+DBMS_OUTPUT.PUT_LINE('String Input: ' || string1); 
+DBMS_OUTPUT.PUT_LINE('String Output: ' || string2); 
+END;
+/
+
+b)	PL/SQL program to find the Fibonacci Series 
+SQL> set serveroutput on
+SQL > DECLARE 
+n NUMBER := 10; 
+a NUMBER := 0; 
+b NUMBER := 1; 
+c NUMBER; 
+BEGIN 
+DBMS_OUTPUT.PUT_LINE('Fibonacci Series (First ' || n || ' Terms):'); DBMS_OUTPUT.PUT_LINE(a); DBMS_OUTPUT.PUT_LINE(b);
+ FOR i IN 3 .. n LOOP 
+c := a + b;
+ DBMS_OUTPUT.PUT_LINE(c);
+ a := b;
+ b := c; 
+END LOOP; 
+END;
+/
+
+
+PROGRAM 11: SPLIT STUDENT TABLE USING CURSORS IN PL/SQL
+
+SQL>create table student(rollno number,name varchar2(20),totalmarks number,result varchar2(4));
+
+SQL>insert into Student values(&rollno,'&name',&total,'&result');
+
+SQL>select * from Student;
+
+SQL> set serveroutput on
+SQL>declare 
+query1 varchar2(100):='create table Student_pass as(select * from Student where result=''pass'')'; 
+query2 varchar2(100):='create table Student_fail as(select * from Student where result=''fail'')'; 
+begin 
+execute immediate query1; 
+execute immediate query2; 
+end; 
+/
+SQL>declare
+ cursor cpass is select * from Student_pass; 
+cursor cfail is select * from Student_fail; 
+begin
+ dbms_output.put_line('LIST OF PASSED STUDENTS');
+ for passrec in cpass loop 
+dbms_output.put_line(passrec.name); 
+end loop; 
+dbms_output.put_line('LIST OF FAILED STUDENTS'); 
+for failrec in cfail loop 
+dbms_output.put_line(failrec.name); 
+end loop; 
+end;
+ /
+
+PROGRAM 12- EXCEPTION HANDLING FOR BANK ACCOUNT MANAGEMENT TABLE
+
+SQL>create table bank_acc(accno varchar(10) primary key,name varchar(20),deposit number); 
+SQL>set serveroutput on 
+SQL > declare 
+vaccno varchar(10):= '&vaccno'; 
+vname varchar2(20):= '&vname'; 
+vdeposit number:= &vdeposit; 
+zerodeposit exception;
+ begin 
+if vdeposit<=0 then 
+raise zerodeposit; 
+else 
+insert into bank_acc(accno,name,deposit) values (vaccno,vname,vdeposit); dbms_output.put_line('Record is successfully inserted'); 
+end if; 
+exception
+ when zerodeposit then 
+dbms_output.put_line('Invalid deposit amount'); 
+end;
+/
+
+SQL> SELECT * FROM BANK_ACC;
+
+PROGRAM 13 : PL/SQL PROGRAM FOR CALCULATING THE GRADE
+
+SQL> set serveroutput on
+SQL > declare 
+java number(3); 
+dbms number(3); 
+co number(3); 
+mfcs number(3);
+ total number(4); 
+per number(6,2); 
+begin 
+dbms_output.put_line('ENTER THE MARKS');
+ java:=&java; 
+dbms:=&dbms; 
+co:=&co; 
+mfcs:=&mfcs; 
+total:=(java+dbms+co+mfcs); 
+per:=(total/400)*100; 
+if (java < 40 or dbms <40 or co<40 or mfcs<40) then
+dbms_output.put_line('FAIL');
+elsif  per> 75 then 
+dbms_output.put_line('GRADE A');
+ elsif(per>65 and per <75)then
+dbms_output.put_line('GRADE B');
+elsif(per>55 and per <65)then
+dbms_output.put_line('GRADE C');
+else
+dbms_output.put_line('INVALID INPUT');
+end if;
+dbms_output.put_line('PERCENTAGE IS '||per);
+end;
+/
+
+PROGRAM 14 : STORED PROCEDURE
+
+SQL> create table tbmarks (rno number(3),name varchar(15),mark1 number(3),mark2 number(3), total number(3),AVERAGE number(5,2),result varchar(10));
+
+SQL> set serveroutput on
+SQL>Create or replace procedure prmarksins (prno in number,pname in varchar,pmark1 in number,
+pmark2 in number) 
+is 
+vtotal number;
+vaverage number; 
+vresult varchar(10); 
+begin 
+vtotal:=pmark1+pmark2
+; vaverage:=vtotal/2; 
+if(pmark1>=40 and pmark2>=40) then 
+vresult:='Pass'; 
+else 
+vresult:='Fail';
+end if;
+ insert into tbmarks values(prno,pname,pmark1,pmark2,vtotal,vaverage,vresult); 
+commit; 
+end;
+
+SQL> exec prmarksins(1,'KING',89,90);
+
+SQL> exec prmarksins(2,'SCOTT',39,56);
+
+SQL> select * from tbmarks;
+
+SQL>create or replace procedure prmarksupd (prno in number, pmark1 in number,pmark2 in number) 
+is 
+vtotal number;
+ vaverage number;
+vresult varchar(10); 
+begin 
+vtotal:=pmark1+pmark2; 
+vaverage:=vtotal/2;
+if(pmark1>=40 and pmark2>=40) then 
+vresult:='Pass'; 
+else 
+vresult:='Fail';
+end if;
+ update tbmarks set mark1=pmark1,mark2=pmark2,total=vtotal,average=vaverage, result=vresult 
+where rno=prno; 
+commit; 
+end;
+
+SQL> select * from tbmarks;
+
+SQL> exec prmarksupd(2,55,56);
+
+SQL> select * from tbmarks;
+
+SQL> create or replace procedure prmarksdel(prno in number) is
+begin 
+delete from tbmarks whererno=prno; commit; 
+end;
+
+SQL> exec prmarksdel(2);
+
+SQL> select * from tbmarks;
+
+PROGRAM : 15 INVENTORY MANAGEMENT SYSTEM USING DATABASE TRIGGERS
+
+SQL>create table inventory_master1(orderid number primary key,custid number,orderdate date,amount number);
+
+SQL>create table inventory_trans1(orderid number references inventory_master1,productid number,productname varchar2(30),quantity number,unitprice number);
+SQL> set serveroutput on
+SQL> create or replace trigger
+check1 before insert on inventory_master1 for each row
+declare
+begin
+if(:new.amount<0)then
+raise_application_error(-20040,'invalid amount');
+end if;
+end;
+
+SQL>insert into inventory_master1 values(&orderid,&custid,'&orderdate',&amount);
+
+SQL>insert into inventory_master1 values(&orderid,&custid,'&orderdate',&amount);
+
+SQL>create or replace trigger
+check2 before insert on inventory_trans1 for each row
+declare
+begin
+if(:new.quantity<0)then
+raise_application_error(-20040,'invalid quantity');
+end if;
+end;
+
+SQL>insert into inventory_trans1 values  (&orderid,&productid,'&productname',&quantity,&unitprice);
+
+SQL>insert into inventory_trans1 values (&orderid,&productid,'&productname',&quantity,&unitprice);
+Enter value for orderid: 5002
+Enter value for productid: 89
+Enter value for productname: Airconditioner
+Enter value for quantity:-10
+Ener value for unitprice: 40000
+old 1: insert into inventory values(&orderid,&productid,’&productname’,&quantity,&unitprice)
+new 1: insert into inventory values(5002,89,’Airconditioner’,-10,40000)
+ORA-20040: INVALID QUANTITY
+ORA-06512: AT "SURESH.CHECK2", LINE 16
+ORA-04088: ERROR DURING EXECUTION OF TRIGGER 
